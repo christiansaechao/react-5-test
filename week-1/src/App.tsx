@@ -1,19 +1,34 @@
+import { useState, useEffect } from "react";
 import "./App.css";
-import { UserCard } from "./components/UserCard";
 
 function App() {
-  const components = [];
+  const [foods, setFoods] = useState([]);
+  const [name, setName] = useState("");
 
-  for (let i = 0; i < 100; i++) {
-    components.push(<UserCard />);
-  }
+  useEffect(() => {
+    (async () => {
+      const { success, data } = await fetch("http://localhost:5000/foods", {
+        method: "post",
+        body: { name: "pizza" },
+      }).then((res) => res.json());
+      setFoods(data);
+    })();
+  }, []);
 
-  const fruits = ["apple", "orange", "banana"];
+  // https://randomuser.api/user?result=10
 
   return (
     <>
-      <div>{[<div>apple</div>, <div>orange</div>, <div>banana</div>]}</div>
-      <div>{components}</div>
+      <div>
+        {foods?.map((food: any) => (
+          <div>
+            {food.name} {food.price}
+          </div>
+        ))}
+      </div>
+
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <button onClick={deleteFood}>Delete Food</button>
     </>
   );
 }
